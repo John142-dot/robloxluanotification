@@ -1,420 +1,95 @@
--- Original by Nolanz in scriptblox. Modified version by ZONKEY9070!
+-- Initialize G2L if it doesn't exist
+if not G2L then
+    G2L = {}
+end
+
+-- Ensure ScreenGui exists
+if not G2L["ScreenGui"] then
+    local screenGui = Instance.new("ScreenGui")
+    screenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+    G2L["ScreenGui"] = screenGui
+end
+
 local TweenService = game:GetService("TweenService")
-local LogService = game:GetService("LogService")
 
--- Define Theme Colors
-local themes = {
-    DefaultTheme = {
-        BackgroundColor = Color3.fromRGB(128, 128, 128), -- Gray
-        TextColor = Color3.fromRGB(255, 255, 255), -- White
-        NotificationColor = Color3.fromRGB(128, 128, 128), -- Gray
-        WarningColor = Color3.fromRGB(255, 0, 0), -- Red
-        TimerColor = Color3.fromRGB(255, 255, 255) -- White for timer
-    },
-    LightTheme = {
-        BackgroundColor = Color3.fromRGB(255, 255, 255), -- White
-        TextColor = Color3.fromRGB(0, 0, 0), -- Black
-        NotificationColor = Color3.fromRGB(240, 240, 240), -- Light gray
-        WarningColor = Color3.fromRGB(255, 0, 0), -- Red
-        TimerColor = Color3.fromRGB(255, 255, 255) -- White for timer
-    },
-    TransparentTheme = {
-        BackgroundColor = Color3.fromRGB(0, 0, 0), -- Black
-        BackgroundTransparency = 0.5, -- 50% transparency
-        TextColor = Color3.fromRGB(255, 255, 255), -- White
-        NotificationColor = Color3.fromRGB(0, 0, 0), -- Black
-        NotificationTransparency = 0.5, -- 50% transparency
-        WarningColor = Color3.fromRGB(255, 0, 0), -- Red
-        WarningTransparency = 0.5, -- 50% transparency
-        TimerColor = Color3.fromRGB(255, 255, 255) -- White
-    },
-    DarkTheme = {
-        BackgroundColor = Color3.fromRGB(0, 0, 0), -- Black
-        BackgroundTransparency = 0, -- No transparency
-        TextColor = Color3.fromRGB(255, 255, 255), -- White
-        NotificationColor = Color3.fromRGB(0, 0, 0), -- Black
-        NotificationTransparency = 0, -- No transparency
-        WarningColor = Color3.fromRGB(255, 0, 0), -- Red
-        WarningTransparency = 0, -- No transparency
-        TimerColor = Color3.fromRGB(255, 255, 255) -- White
-    },
-    UpdateTheme = {
-        BackgroundColor = Color3.fromRGB(255, 165, 0), -- Orange
-        TextColor = Color3.fromRGB(0, 0, 0), -- Black
-        NotificationColor = Color3.fromRGB(255, 165, 0), -- Orange
-        TimerColor = Color3.fromRGB(255, 165, 0) -- Orange for timer
-    },
-    AlertTheme = {
-        BackgroundColor = Color3.fromRGB(255, 255, 0), -- Yellow
-        TextColor = Color3.fromRGB(0, 0, 0), -- Black
-        NotificationColor = Color3.fromRGB(255, 255, 0), -- Yellow
-        TimerColor = Color3.fromRGB(255, 255, 255) -- White for timer
-    },
-    RenivyTheme = {
-        BackgroundColor = Color3.fromRGB(0, 0, 0), -- Black
-        TextColor = Color3.fromRGB(255, 0, 0), -- Red
-        NotificationColor = Color3.fromRGB(0, 0, 0), -- Black
-        TimerColor = Color3.fromRGB(128, 128, 128) -- Gray for timer
-    },
-    LuaTheme = {
-        BackgroundColor = Color3.fromRGB(128, 0, 128), -- Purple
-        TextColor = Color3.fromRGB(0, 0, 0), -- Black
-        NotificationColor = Color3.fromRGB(128, 0, 128), -- Purple
-        TimerColor = Color3.fromRGB(128, 0, 128) -- Purple for timer
-    },
-    OceanTheme = {
-        BackgroundColor = Color3.fromRGB(45, 125, 255), -- Light blue background
-        TextColor = Color3.new(1, 1, 1), -- White text
-        NotificationColor = Color3.fromRGB(45, 125, 255), -- Light blue
-        TimerColor = Color3.fromRGB(0, 0, 139) -- Dark blue for timer
-    },
-    IncognitoTheme = {
-        BackgroundColor = Color3.fromRGB(45, 45, 45), -- Gray background
-        TextColor = Color3.new(1, 1, 1), -- White text
-        NotificationColor = Color3.fromRGB(45, 45, 45), -- Gray
-        TimerColor = Color3.fromRGB(255, 255, 255) -- White for timer
-    },
-    NeonTheme = {
-        BackgroundColor = Color3.fromRGB(0, 255, 255), -- Cyan
-        TextColor = Color3.fromRGB(255, 0, 255), -- Magenta
-        NotificationColor = Color3.fromRGB(0, 255, 255), -- Cyan
-        WarningColor = Color3.fromRGB(255, 0, 0), -- Red
-        TimerColor = Color3.fromRGB(255, 255, 255) -- White
-    },
-    RetroTheme = {
-        BackgroundColor = Color3.fromRGB(255, 192, 203), -- Pink
-        TextColor = Color3.fromRGB(0, 0, 0), -- Black
-        NotificationColor = Color3.fromRGB(255, 105, 180), -- Hot Pink
-        WarningColor = Color3.fromRGB(255, 69, 0), -- Red-Orange
-        TimerColor = Color3.fromRGB(255, 255, 255) -- White
-    },
-    ForestTheme = {
-        BackgroundColor = Color3.fromRGB(34, 139, 34), -- Forest Green
-        TextColor = Color3.fromRGB(255, 255, 255), -- White
-        NotificationColor = Color3.fromRGB(60, 179, 113), -- Medium Sea Green
-        WarningColor = Color3.fromRGB(255, 0, 0), -- Red
-        TimerColor = Color3.fromRGB(255, 255, 255) -- White
-    },
-    SunsetTheme = {
-        BackgroundColor = Color3.fromRGB(255, 140, 0), -- Dark Orange
-        TextColor = Color3.fromRGB(255, 255, 255), -- White
-        NotificationColor = Color3.fromRGB(255, 69, 0), -- Red-Orange
-        WarningColor = Color3.fromRGB(255, 0, 0), -- Red
-        TimerColor = Color3.fromRGB(255, 255, 255) -- White
-    },
-    OceanWaveTheme = {
-        BackgroundColor = Color3.fromRGB(70, 130, 180), -- Steel Blue
-        TextColor = Color3.fromRGB(255, 255, 255), -- White
-        NotificationColor = Color3.fromRGB(135, 206, 250), -- Light Sky Blue
-        WarningColor = Color3.fromRGB(255, 0, 0), -- Red
-        TimerColor = Color3.fromRGB(255, 255, 255) -- White
-    },
-    CandyTheme = {
-        BackgroundColor = Color3.fromRGB(255, 182, 193), -- Light Pink
-        TextColor = Color3.fromRGB(139, 69, 19), -- Saddle Brown
-        NotificationColor = Color3.fromRGB(255, 105, 180), -- Hot Pink
-        WarningColor = Color3.fromRGB(255, 0, 0), -- Red
-        TimerColor = Color3.fromRGB(255, 255, 255) -- White
-    },
-    GalaxyTheme = {
-        BackgroundColor = Color3.fromRGB(25, 25, 112), -- Midnight Blue
-        TextColor = Color3.fromRGB(255, 255, 255), -- White
-        NotificationColor = Color3.fromRGB(75, 0, 130), -- Indigo
-        WarningColor = Color3.fromRGB(255, 0, 0), -- Red
-        TimerColor = Color3.fromRGB(255, 255, 255) -- White
-    },
-    EarthTheme = {
-        BackgroundColor = Color3.fromRGB(139, 69, 19), -- Saddle Brown
-        TextColor = Color3.fromRGB(255, 255, 255), -- White
-        NotificationColor = Color3.fromRGB(160, 82, 45), -- Sienna
-        WarningColor = Color3.fromRGB(255, 0, 0), -- Red
-        TimerColor = Color3.fromRGB(255, 255, 255) -- White
-    },
-    IceTheme = {
-        BackgroundColor = Color3.fromRGB(173, 216, 230), -- Light Blue
-        TextColor = Color3.fromRGB(0, 0, 139), -- Dark Blue
-        NotificationColor = Color3.fromRGB(240, 248, 255), -- Alice Blue
-        WarningColor = Color3.fromRGB(255, 0, 0), -- Red
-        TimerColor = Color3.fromRGB(255, 255, 255) -- White
-    },
-    FireTheme = {
-        BackgroundColor = Color3.fromRGB(255, 69, 0), -- Red-Orange
-        TextColor = Color3.fromRGB(255, 255, 255), -- White
-        NotificationColor = Color3.fromRGB(255, 140, 0), -- Dark Orange
-        WarningColor = Color3.fromRGB(255, 0, 0), -- Red
-        TimerColor = Color3.fromRGB(255, 255, 255) -- White
-    },
-    PastelTheme = {
-        BackgroundColor = Color3.fromRGB(255, 228, 225), -- Misty Rose
-        TextColor = Color3.fromRGB(0, 0, 0), -- Black
-        NotificationColor = Color3.fromRGB(255, 240, 245), -- Lavender Blush
-        WarningColor = Color3.fromRGB(255, 0, 0), -- Red
-        TimerColor = Color3.fromRGB(255, 255, 255) -- White
-    },
-    CyberpunkTheme = {
-        BackgroundColor = Color3.fromRGB(0, 0, 0), -- Black
-        TextColor = Color3.fromRGB(0, 255, 255), -- Cyan
-        NotificationColor = Color3.fromRGB(255, 0, 255), -- Magenta
-        WarningColor = Color3.fromRGB(255, 0, 0), -- Red
-        TimerColor = Color3.fromRGB(255, 255, 255) -- White
-    },
-    VintageTheme = {
-        BackgroundColor = Color3.fromRGB(255, 228, 196), -- Bisque
-        TextColor = Color3.fromRGB(139, 69, 19), -- Saddle Brown
-        NotificationColor = Color3.fromRGB(255, 222, 173), -- Navajo White
-        WarningColor = Color3.fromRGB(255, 0, 0), -- Red
-        TimerColor = Color3.fromRGB(255, 255, 255) -- White
-    },
-    TropicalTheme = {
-        BackgroundColor = Color3.fromRGB(255, 215, 0), -- Gold
-        TextColor = Color3.fromRGB(0, 128, 0), -- Green
-        NotificationColor = Color3.fromRGB(255, 255, 0), -- Yellow
-        WarningColor = Color3.fromRGB(255, 0, 0), -- Red
-        TimerColor = Color3.fromRGB(255, 255, 255) -- White
-    },
-    MysticTheme = {
-        BackgroundColor = Color3.fromRGB(75, 0, 130), -- Indigo
-        TextColor = Color3.fromRGB(255, 255, 255), -- White
-        NotificationColor = Color3.fromRGB(138, 43, 226), -- Blue Violet
-        WarningColor = Color3.fromRGB(255, 0, 0), -- Red
-        TimerColor = Color3.fromRGB(255, 255, 255) -- White
-    },
-    RusticTheme = {
-        BackgroundColor = Color3.fromRGB(210, 180, 140), -- Tan
-        TextColor = Color3.fromRGB(0, 0, 0), -- Black
-        NotificationColor = Color3.fromRGB(222, 184, 135), -- Burlywood
-        WarningColor = Color3.fromRGB(255, 0, 0), -- Red
-        TimerColor = Color3.fromRGB(255, 255, 255) -- White
-    },
-    FloralTheme = {
-        BackgroundColor = Color3.fromRGB(255, 228, 225), -- Misty Rose
-        TextColor = Color3.fromRGB(255, 105, 180), -- Hot Pink
-        NotificationColor = Color3.fromRGB(255, 240, 245), -- Lavender Blush
-        WarningColor = Color3.fromRGB(255, 0, 0), -- Red
-        TimerColor = Color3.fromRGB(255, 255, 255) -- White
-    },
-    SpaceTheme = {
-        BackgroundColor = Color3.fromRGB(0, 0, 0), -- Black
-        TextColor = Color3.fromRGB(255, 255, 255), -- White
-        NotificationColor = Color3.fromRGB(75, 0, 130), -- Indigo
-        WarningColor = Color3.fromRGB(255, 0, 0), -- Red
-        TimerColor = Color3.fromRGB(255, 255, 255) -- White
-    },
-    CarnivalTheme = {
-        BackgroundColor = Color3.fromRGB(255, 0, 255), -- Magenta
-        TextColor = Color3.fromRGB(255, 255, 0), -- Yellow
-        NotificationColor = Color3.fromRGB(255, 165, 0), -- Orange
-        WarningColor = Color3.fromRGB(255, 0, 0), -- Red
-        TimerColor = Color3.fromRGB(255, 255, 255) -- White
-    },
-    AutumnTheme = {
-        BackgroundColor = Color3.fromRGB(255, 165, 0), -- Orange
-        TextColor = Color3.fromRGB(0, 0, 0), -- Black
-        NotificationColor = Color3.fromRGB(255, 99, 71), -- Tomato
-        WarningColor = Color3.fromRGB(255, 0, 0), -- Red
-        TimerColor = Color3.fromRGB(255, 255, 255) -- White
-    },
-    WinterTheme = {
-        BackgroundColor = Color3.fromRGB(240, 248, 255), -- Alice Blue
-        TextColor = Color3.fromRGB(0, 0, 139), -- Dark Blue
-        NotificationColor = Color3.fromRGB(173, 216, 230), -- Light Blue
-        WarningColor = Color3.fromRGB(255, 0, 0), -- Red
-        TimerColor = Color3.fromRGB(255, 255, 255) -- White
-    },
-    SpringTheme = {
-        BackgroundColor = Color3.fromRGB(144, 238, 144), -- Light Green
-        TextColor = Color3.fromRGB(0, 0, 0), -- Black
-        NotificationColor = Color3.fromRGB(255, 192, 203), -- Pink
-        WarningColor = Color3.fromRGB(255, 0, 0), -- Red
-        TimerColor = Color3.fromRGB(255, 255, 255) -- White
-    },
-    TechnoTheme = {
-        BackgroundColor = Color3.fromRGB(0, 0, 0), -- Black
-        TextColor = Color3.fromRGB(0, 255, 0), -- Green
-        NotificationColor = Color3.fromRGB(0, 255, 255), -- Cyan
-        WarningColor = Color3.fromRGB(255, 0, 0), -- Red
-        TimerColor = Color3.fromRGB(255, 255, 255) -- White
-    },
-    MinimalistTheme = {
-        BackgroundColor = Color3.fromRGB(255, 255, 255), -- White
-        TextColor = Color3.fromRGB(0, 0, 0), -- Black
-        NotificationColor = Color3.fromRGB(240, 240, 240), -- Light Gray
-        WarningColor = Color3.fromRGB(255, 0, 0), -- Red
-        TimerColor = Color3.fromRGB(255, 255, 255) -- White
-    },
-    ComicTheme = {
-        BackgroundColor = Color3.fromRGB(255, 255, 255), -- White
-        TextColor = Color3.fromRGB(0, 0, 0), -- Black
-        NotificationColor = Color3.fromRGB(255, 215, 0), -- Gold
-        WarningColor = Color3.fromRGB(255, 0, 0), -- Red
-        TimerColor = Color3.fromRGB(255, 255, 255) -- White
-    },
-    ZenTheme = {
-        BackgroundColor = Color3.fromRGB(255, 250, 205), -- Lemon Chiffon
-        TextColor = Color3.fromRGB(0, 100, 0), -- Dark Green
-        NotificationColor = Color3.fromRGB(240, 255, 240), -- Honeydew
-        WarningColor = Color3.fromRGB(255, 0, 0), -- Red
-        TimerColor = Color3.fromRGB(255, 255, 255) -- White
-    }
-}
+local notificationSound = Instance.new("Sound", G2L["ScreenGui"])
+notificationSound.SoundId = "rbxassetid://3398620867" -- Custom notification sound
+notificationSound.Volume = 0.5
 
--- Create ScreenGui
-local screenGui = Instance.new("ScreenGui")
-screenGui.Name = "NotificationGui"
-screenGui.ResetOnSpawn = false
-screenGui.Parent = game.Players.LocalPlayer:WaitForChild("PlayerGui")
+-- Function to show custom notification
+local function ShowNotification(title, text, theme)
+    notificationSound:Play()
 
--- Create Notification Frame
-local notificationFrame = Instance.new("Frame")
-notificationFrame.Name = "NotificationFrame"
-notificationFrame.Size = UDim2.new(0.3, 0, 0.5, 0)
-notificationFrame.Position = UDim2.new(1, -20, 1, -20)
-notificationFrame.AnchorPoint = Vector2.new(1, 1)
-notificationFrame.BackgroundTransparency = 1
-notificationFrame.BackgroundColor3 = themes["DefaultTheme"].BackgroundColor -- Apply DefaultTheme background color
-notificationFrame.Parent = screenGui
+    local notificationFrame = Instance.new("Frame")
+    notificationFrame.Parent = G2L["ScreenGui"]
+    notificationFrame.Size = UDim2.new(0, 300, 0, 100)
+    notificationFrame.Position = UDim2.new(0.5, -150, 0.3, 0)
+    notificationFrame.AnchorPoint = Vector2.new(0.5, 0.5)
+    notificationFrame.BorderSizePixel = 0 -- Remove the border outline
 
--- Layout for Notifications
-local uiListLayout = Instance.new("UIListLayout")
-uiListLayout.SortOrder = Enum.SortOrder.LayoutOrder
-uiListLayout.VerticalAlignment = Enum.VerticalAlignment.Bottom
-uiListLayout.Padding = UDim.new(0, 10)
-uiListLayout.Parent = notificationFrame
+    -- Add UICorner for rounded corners
+    local corner = Instance.new("UICorner")
+    corner.Parent = notificationFrame
+    corner.CornerRadius = UDim.new(0, 20) -- Adjust the radius for more or less rounding
 
--- Function to create notifications
-local function createNotification(title, description, duration, notificationType, theme, scriptUrl)
-    description = description or ""
-    duration = duration or 5
+    local bellIcon = Instance.new("ImageLabel")
+    bellIcon.Parent = notificationFrame
+    bellIcon.Size = UDim2.new(0, 50, 0, 50)
+    bellIcon.Position = UDim2.new(0, 10, 0.5, -25)
+    bellIcon.Image = "rbxassetid://6023426923" -- White bell image
+    bellIcon.BackgroundTransparency = 1
 
-    -- Ensure theme exists or use default
-    local currentTheme = themes[theme] or themes["DefaultTheme"]
-
-    -- Create Notification Template
-    local notificationTemplate = Instance.new("Frame")
-    notificationTemplate.Size = UDim2.new(1, 0, 0.25, 0)
-    notificationTemplate.BackgroundColor3 = (notificationType == "Warning" and currentTheme.WarningColor) or currentTheme.NotificationColor
-    notificationTemplate.BackgroundTransparency = (notificationType == "Warning" and (currentTheme.WarningTransparency or 0)) or (currentTheme.NotificationTransparency or 0)
-    notificationTemplate.BorderSizePixel = 0
-    notificationTemplate.ClipsDescendants = true
-    notificationTemplate.Parent = notificationFrame
-
-    -- Corner Radius
-    local uiCorner = Instance.new("UICorner")
-    uiCorner.CornerRadius = UDim.new(0, 12)
-    uiCorner.Parent = notificationTemplate
-
-    -- Title Label
     local titleLabel = Instance.new("TextLabel")
-    titleLabel.Size = UDim2.new(1, -10, 0.4, -10)
-    titleLabel.Position = UDim2.new(0, 5, 0, 5)
+    titleLabel.Parent = notificationFrame
+    titleLabel.Size = UDim2.new(0, 200, 0, 30)
+    titleLabel.Position = UDim2.new(0, 70, 0.2, 0)
     titleLabel.BackgroundTransparency = 1
-    titleLabel.Font = Enum.Font.GothamBold
-    titleLabel.TextScaled = true
-    titleLabel.TextColor3 = currentTheme.TextColor
     titleLabel.Text = title
-    titleLabel.TextXAlignment = Enum.TextXAlignment.Left
-    titleLabel.Parent = notificationTemplate
+    titleLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+    titleLabel.TextScaled = true
+    titleLabel.Font = Enum.Font.SourceSans
 
-    -- Description Label
-    local descriptionLabel = Instance.new("TextLabel")
-    descriptionLabel.Size = UDim2.new(1, -10, 0.4, -10)
-    descriptionLabel.Position = UDim2.new(0, 5, 0.4, 5)
-    descriptionLabel.BackgroundTransparency = 1
-    descriptionLabel.Font = Enum.Font.Gotham
-    descriptionLabel.TextScaled = true
-    descriptionLabel.TextColor3 = currentTheme.TextColor
-    descriptionLabel.Text = description
-    descriptionLabel.TextXAlignment = Enum.TextXAlignment.Left
-    descriptionLabel.Parent = notificationTemplate
+    local messageLabel = Instance.new("TextLabel")
+    messageLabel.Parent = notificationFrame
+    messageLabel.Size = UDim2.new(0, 200, 0, 30)
+    messageLabel.Position = UDim2.new(0, 70, 0.5, 0)
+    messageLabel.BackgroundTransparency = 1
+    messageLabel.Text = text
+    messageLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+    messageLabel.TextScaled = true
+    messageLabel.Font = Enum.Font.SourceSans
 
-    -- Timer Frame
-    local timerFrame = Instance.new("Frame")
-    timerFrame.Size = UDim2.new(1, -10, 0.2, -10)
-    timerFrame.Position = UDim2.new(0, 5, 0.8, 5)
-    timerFrame.BackgroundColor3 = currentTheme.TimerColor -- Use TimerColor from the current theme
-    timerFrame.BorderSizePixel = 0
-    timerFrame.Parent = notificationTemplate
-
-    -- Timer Corner Radius
-    local timerCorner = Instance.new("UICorner")
-    timerCorner.CornerRadius = UDim.new(0, 12)
-    timerCorner.Parent = timerFrame
-
-    -- Timer Progress Bar
-    local timerProgressBar = Instance.new("Frame")
-    timerProgressBar.Size = UDim2.new(1, 0, 1, 0)
-    timerProgressBar.BackgroundColor3 = Color3.fromRGB(0, 0, 0) -- Black background for the timer
-    timerProgressBar.BorderSizePixel = 0
-    timerProgressBar.Parent = timerFrame
-
-    -- Tween for Timer Progress Bar
-    local timerTween = TweenService:Create(timerProgressBar, TweenInfo.new(duration, Enum.EasingStyle.Linear), {Size = UDim2.new(0, 0, 1, 0)})
-
-    -- Set initial position off-screen
-    notificationTemplate.Position = UDim2.new(1.5, 0, 0, 0)
-
-    -- Tween for slide in
-    local slideInTween = TweenService:Create(notificationTemplate, TweenInfo.new(0.5, Enum.EasingStyle.Quint, Enum.EasingDirection.Out), {Position = UDim2.new(1, -20, 0, 0)})
-    slideInTween:Play()
-
-    -- Start the timer tween
-    timerTween:Play()
-
-    -- Wait for the specified duration
-    wait(duration)
-
-    -- Tween for slide out
-    local slideOutTween = TweenService:Create(notificationTemplate, TweenInfo.new(0.5, Enum.EasingStyle.Quint, Enum.EasingDirection.In), {Position = UDim2.new(1.5, 0, 0, 0)})
-    slideOutTween:Play()
-
-    -- Cleanup after animation
-    slideOutTween.Completed:Connect(function()
-        notificationTemplate:Destroy()
-
-        -- Execute script from URL after the notification disappears
-        if scriptUrl then
-            local success, err = pcall(function()
-                local scriptContent = game:GetService("HttpService"):GetAsync(scriptUrl)
-                loadstring(scriptContent)() -- Execute the script
-            end)
-            if not success then
-                createNotification("Script Error", "Failed to execute script: " .. err, 5, "Error") -- Display error notification
-                warn("Failed to execute script from URL: " .. err)
-            end
-        end
-    end)
-end
-
--- Add a listener for console messages (Errors and Warnings)
-local lastNotificationTime = 0
-LogService.MessageOut:Connect(function(message, messageType, timestamp)
-    local currentTime = os.time()
-    
-    if (messageType == Enum.MessageType.Error or messageType == Enum.MessageType.Warning) and (currentTime - lastNotificationTime >= 5) then
-        lastNotificationTime = currentTime
-        local title = messageType == Enum.MessageType.Error and "Console Error" or "Console Warning"
-        createNotification(title, message, 5, messageType == Enum.MessageType.Error and "Error" or "Warning")
+    -- Apply the selected theme
+    if theme == "black" then
+        notificationFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+        notificationFrame.BackgroundTransparency = 0.5
+    elseif theme == "transparent" then
+        notificationFrame.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+        notificationFrame.BackgroundTransparency = 0.8
     end
-end)
 
--- Wrap your main logic in a pcall to capture runtime errors
-local success, err = pcall(function()
-    -- Example Notifications
-    createNotification("Welcome!", "This is your first notification.", 5, "Info", "LightTheme")
-    wait(1)
-    createNotification("Update!", "New features have been added!", 5, "Info", "UpdateTheme", "https://example.com/your-script.lua") -- Example script URL
-    wait(1)
-    createNotification("Reminder", "Don't forget to check your tasks!", 5, "Info", "TransparentTheme")
-    wait(1)
-    createNotification("Alert", "This is an important message!", 5, "Info", "AlertTheme")
-    wait(1)
-    createNotification("Warning!", "This is a warning notification.", 5, "Warning", "DarkTheme")
-    wait(1)
-    print("HI!")
-end)
-setclipboard("Join Our Discord! https://discord.gg/invite/jj4NC9ppSC")
+    -- Tween for bounce effect
+    local bounceTween = TweenService:Create(notificationFrame, TweenInfo.new(0.5, Enum.EasingStyle.Bounce, Enum.EasingDirection.Out), {Position = UDim2.new(0.5, -150, 0.25, 0)})
+    bounceTween:Play()
 
--- If there was an error in the pcall, notify the user
-if not success then
-    createNotification("Runtime Error", "An error occurred: " .. err, 5, "Error")
+    wait(0.5)  -- Wait for the bounce to finish
+
+    -- Tween for fade out effect
+    local fadeTween = TweenService:Create(notificationFrame, TweenInfo.new(1, Enum.EasingStyle.Linear, Enum.EasingDirection.Out), {BackgroundTransparency = 1})
+    
+    -- Connect to the Completed event
+    fadeTween.Completed:Connect(function()
+        notificationFrame:Destroy() -- Destroy the notification frame after the fade animation is complete
+    end)
+
+    fadeTween:Play()
+
+    wait(5)  -- Wait for the notification to be visible for 5 seconds
 end
+
+-- Example of showing notification with different themes
+ShowNotification("Black Theme", "This is a black themed notification!", "black")
+wait(2)
+ShowNotification("Transparent Theme", "This is a transparent themed notification!", "transparent")
+
+loadstring(game:HttpGet(" YOUR SCRIPT URL "))()
